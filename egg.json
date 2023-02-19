@@ -1,0 +1,26 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v1"
+    },
+    "exported_at": "2020-07-04T20:33:57+02:00",
+    "name": "RouliTheAPI",
+    "author": "clemfern456@gmail.com",
+    "description": "RouliTheAPI running in docker",
+    "image": "quay.io\/clem_fern\/ptero_java:latest",
+    "startup": "java -jar RouliTheAPI.jar && .\/deploy.sh",
+    "config": {
+        "files": "{\r\n    \"global.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"port\": \"{{server.build.default.port}}\"\r\n        }\r\n    }\r\n}",
+        "startup": "{\r\n    \"done\": \" - MyApiVerticle start...\"\r\n}",
+        "logs": "{\r\n    \"custom\": false,\r\n    \"location\": \"logs\/app.log\"\r\n}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/ash\r\n# Jenkins Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\napk update\r\napk add curl\r\napk add ca-certificates\r\nupdate-ca-certificates\r\n\r\ncd \/mnt\/server\r\n\r\ncurl -k https:\/\/jenkins.gogo08190.fr\/job\/RouliTheAPI\/lastSuccessfulBuild\/artifact\/deploy.sh -o deploy.sh\r\n\r\nchmod +x deploy.sh",
+            "container": "alpine:3.4",
+            "entrypoint": "ash"
+        }
+    },
+    "variables": []
+}

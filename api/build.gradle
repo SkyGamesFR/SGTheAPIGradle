@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
+}
+
+group 'fr.skygames.sgtheapi'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
+
+shadowJar {
+    configurations = [project.configurations.shade]
+}
+
+dependencies {
+    implementation 'io.vertx:vertx-core'
+    implementation 'io.vertx:vertx-web-client:3.9.2'
+}
