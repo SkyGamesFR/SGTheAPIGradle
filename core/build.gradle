@@ -18,7 +18,7 @@ shadowJar {
     configurations = [project.configurations.shade]
 }
 
-version = '1.0-SNAPSHOT'
+version = '1.1-SNAPSHOT'
 
 jar {
     manifest {
