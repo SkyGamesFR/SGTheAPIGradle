@@ -80,7 +80,7 @@ FullGreen.GN – [@FullGreen.GN](https://www.instagram.com/fullgreen.gn/) – hi
 
 Distributed under the GNU GPL v3.0 license. See ``LICENSE`` for more information.
 
-[https://github.com/yourname/github-link](https://github.com/FullGreenDev)
+[FullGreenGN](https://github.com/FullGreenGN)
 
 ## Contributing
 
