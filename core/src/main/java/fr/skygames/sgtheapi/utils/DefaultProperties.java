@@ -27,14 +27,14 @@ public abstract class DefaultProperties extends Properties{
 				SkyGamesTheApp.LOGGER.error("Sorry, unable to find " + this.filename() + " in JAR Resources");
 				return;
 			}
-			
+
 			if(!file.exists()) {
 				// create file
 				Files.copy(input, file.toPath());
 				SkyGamesTheApp.LOGGER.debug( this.filename() + " successfuly imported from JAR Resources !");
 			}
 
-			input = new FileInputStream(file);
+			input = Files.newInputStream(file.toPath());
 			this.load(input);
 
 		} catch (IOException e) {

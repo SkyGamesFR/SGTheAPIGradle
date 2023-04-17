@@ -39,6 +39,10 @@ public class MyApiVerticle extends AbstractVerticle {
         final DiscordResource discordResource = new DiscordResource(this.connector);
         final Router discordSubRouter = discordResource.getSubRouter(vertx);
         router.mountSubRouter("/api/v1/", discordSubRouter);
+
+        final RankResource rankResource = new RankResource(this.connector);
+        final Router rankSubRouter = rankResource.getSubRouter(vertx);
+        router.mountSubRouter("/api/v1/", rankSubRouter);
         
         int port = this.globalProperties.getPort();
         vertx.createHttpServer().requestHandler(router).listen(port);

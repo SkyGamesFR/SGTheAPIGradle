@@ -51,7 +51,7 @@ CREATE PROCEDURE IF NOT EXISTS getTeamPointHistory(IN team VARCHAR(20)) BEGIN SE
 
 -- ##new_query
 -- create players
-CREATE TABLE IF NOT EXISTS `s2_skygamestheapi`.`players` ( `uuid` VARCHAR(50) NOT NULL , `name` VARCHAR(50) NOT NULL , `first_login` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , `last_login` DATETIME NULL , `team` VARCHAR(20) NOT NULL DEFAULT 'none', PRIMARY KEY (`uuid`) , FOREIGN KEY (team) REFERENCES teams(id)) ENGINE = InnoDB;
+CREATE TABLE IF NOT EXISTS `s2_skygamestheapi`.`players` ( `uuid` VARCHAR(50) NOT NULL , `name` VARCHAR(50) NOT NULL, `rank` VARCHAR(255) NULL, `money` VARCHAR(255) NULL, `first_login` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , `last_login` DATETIME NULL , `team` VARCHAR(20) NOT NULL DEFAULT 'none', PRIMARY KEY (`uuid`) , FOREIGN KEY (team) REFERENCES teams(id)) ENGINE = InnoDB;
 
 -- ##new_query
 -- players getAllPlayers
@@ -80,6 +80,14 @@ CREATE PROCEDURE IF NOT EXISTS getPlayerTeam(IN uuid VARCHAR(50)) BEGIN SELECT t
 -- ##new_query
 -- players updatePlayer
 CREATE PROCEDURE IF NOT EXISTS updatePlayerTeam(IN uuid VARCHAR(50), IN team VARCHAR(20)) BEGIN UPDATE players SET players.team=team WHERE players.uuid=uuid; CALL getPlayer(uuid); END
+
+-- ##new_query
+-- players getPlayerRank
+CREATE PROCEDURE IF NOT EXISTS getPlayerRank(IN uuid VARCHAR(50)) BEGIN SELECT rank FROM players WHERE players.uuid=uuid; END
+
+-- ##new_query
+-- players updatePlayerRank
+CREATE PROCEDURE IF NOT EXISTS updatePlayerRank(IN uuid VARCHAR(50), IN rank VARCHAR(20)) BEGIN UPDATE players SET players.rank=rank WHERE players.uuid=uuid; CALL getPlayer(uuid); END
 
 -- ##new_query
 -- create discord_tokens
@@ -113,4 +121,26 @@ CREATE PROCEDURE IF NOT EXISTS getIDFromUUID(IN uuid VARCHAR(50)) BEGIN SELECT *
 -- discord_tokens setIDFromToken
 CREATE PROCEDURE IF NOT EXISTS setIDFromToken(IN token VARCHAR(50), IN id VARCHAR(50)) BEGIN UPDATE discord_tokens SET discord_tokens.discord_id=id WHERE discord_tokens.token=token; CALL getToken(token); END
 
+-- ##new_query
+-- create ranks
+CREATE TABLE IF NOT EXISTS `s2_skygamestheapi`.`ranks` ( `name` VARCHAR(50) NOT NULL , `prefix` VARCHAR(50) NOT NULL , `suffix` VARCHAR(50) NOT NULL, `color` VARCHAR(20) NOT NULL DEFAULT 'none', `priority` INTEGER(100) NULL, PRIMARY KEY (`name`)) ENGINE = InnoDB;
 
+-- ##new_query
+-- ranks addRank
+CREATE PROCEDURE IF NOT EXISTS addRank(IN name VARCHAR(50), IN prefix VARCHAR(50), IN suffix VARCHAR(50), IN color VARCHAR(20), IN priority INTEGER(100)) BEGIN INSERT INTO `ranks` (`name`, `prefix`, `suffix`, `color`, `priority`) VALUES (name, prefix, suffix, color, priority) ON DUPLICATE KEY UPDATE prefix = VALUES(prefix), suffix = VALUES(suffix), color = VALUES(color), priority = VALUES(priority); CALL getRank(name); END
+
+-- ##new_query
+-- ranks updateRank
+CREATE PROCEDURE IF NOT EXISTS updateRank(IN name VARCHAR(50), IN prefix VARCHAR(50), IN suffix VARCHAR(50), IN color VARCHAR(20), IN priority INTEGER(100)) BEGIN UPDATE ranks SET ranks.prefix=prefix, ranks.suffix=suffix, ranks.color=color, ranks.priority=priority WHERE ranks.name=name; CALL getRank(name); END
+
+-- ##new_query
+-- ranks getRank
+CREATE PROCEDURE IF NOT EXISTS getRank(IN name VARCHAR(50)) BEGIN SELECT * FROM ranks WHERE ranks.name=name; END
+
+-- ##new_query
+-- ranks deleteRank
+CREATE PROCEDURE IF NOT EXISTS deleteRank(IN name VARCHAR(50)) BEGIN DELETE FROM ranks WHERE ranks.name=name; END
+
+-- ##new_query
+-- ranks getAllRanks
+CREATE PROCEDURE IF NOT EXISTS getAllRanks() BEGIN SELECT * FROM ranks; END

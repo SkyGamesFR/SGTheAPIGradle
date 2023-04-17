@@ -14,17 +14,20 @@ public class Player {
 	private Date last_login;
 	
 	private String team;
+
+	private String rank;
 	
-	public Player(String uuid, String name, Date first_login, Date last_login, String team) {
+	public Player(String uuid, String name, Date first_login, Date last_login, String team, String rank) {
 		this.uuid = uuid;
 		this.name = name;
 		this.first_login = first_login;
 		this.last_login = last_login;
 		this.team = team;
+		this.rank = rank;
 	}
 	
 	public Player(String uuid, String name) {
-		this(uuid, name, null, null, null);
+		this(uuid, name, null, null, null, null);
 	}
 
 	public Player() {}
@@ -69,4 +72,11 @@ public class Player {
 		this.team = team;
 	}
 
+	public String getRank() {
+		return rank;
+	}
+
+	public void setRank(String rank) {
+		this.rank = rank;
+	}
 }

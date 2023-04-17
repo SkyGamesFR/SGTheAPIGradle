@@ -43,8 +43,16 @@ public class PlayerResource {
         subRouter.get("/players/:player/team").handler(this::getPlayerTeam); // get player team
         subRouter.securePatch("/players/:player/team").handler(this::updatePlayerTeam); // update player team
 
+        subRouter.get("/players/:player/rank").handler(this::getPlayerRank); // get player rank
+        subRouter.securePatch("/players/:player/rank").handler(this::updatePlayerRank); // update player rank
+
+        subRouter.get("/players/:player/money").handler(this::getPlayerMoney); // get player money
+        subRouter.securePatch("/players/:player/money").handler(this::updatePlayerMoney); // update player money
+
         return subRouter;
     }
+
+
 
     private void getAllPlayers(final RoutingContext routingContext) {
         SkyGamesTheApp.LOGGER.info(HttpLogUtils.logHttpRequestRemote(routingContext.request()));
@@ -373,6 +381,116 @@ public class PlayerResource {
                     .putHeader("content-type", "application/json")
                     .end(Json.encode(errorJsonResponse));
         }
+    }
+
+    private void getPlayerRank(RoutingContext routingContext) {
+        SkyGamesTheApp.LOGGER.info(HttpLogUtils.logHttpRequestRemote(routingContext.request()) + " pathParam : " + routingContext.pathParams());
+        String param = routingContext.pathParam("player").toLowerCase();
+
+        try {
+            String rank = playerService.getRank(param);
+
+            if (rank != null) {
+
+                final JsonObject jsonResponse = new JsonObject();
+                jsonResponse.put("rank", rank);
+                routingContext.response()
+                        .setStatusCode(200)
+                        .putHeader("content-type", "application/json")
+                        .end(Json.encode(jsonResponse));
+
+            } else {
+                SkyGamesTheApp.LOGGER.warn(HttpLogUtils.logHttpRequestRemote(routingContext.request()) + " player[uuid=\"" + param + "\"] can't be found !");
+                final JsonObject errorJsonResponse = new JsonObject();
+                errorJsonResponse.put("error", "No player can be found for the specified parameter : " + param);
+                errorJsonResponse.put("player", param);
+                routingContext.response()
+                        .setStatusCode(404)
+                        .putHeader("content-type", "application/json")
+                        .end(Json.encode(errorJsonResponse));
+            }
+        } catch (Exception e) {
+            SkyGamesTheApp.LOGGER.error(HttpLogUtils.logHttpRequestRemote(routingContext.request()) + " Internal Server Error : PlayerService getPlayerRank SqlConnector Exception !", e);
+
+            final JsonObject errorJsonResponse = new JsonObject();
+            errorJsonResponse.put("error", "SqlConnector exception");
+
+            routingContext.response()
+                    .setStatusCode(500)
+                    .putHeader("content-type", "application/json")
+                    .end(Json.encode(errorJsonResponse));
+        }
+    }
+
+    private void updatePlayerRank(final RoutingContext routingContext) {
+        SkyGamesTheApp.LOGGER.info(HttpLogUtils.logHttpRequestRemote(routingContext.request()) + " pathParam : " + routingContext.pathParams());
+
+        final String body = routingContext.getBodyAsString();
+        final String param = routingContext.pathParam("player").toLowerCase();
+
+        try {
+            final JsonObject jsonObject = new JsonObject(body);
+            if (!jsonObject.containsKey("rank")) {
+                throw new DecodeException("Missing rank field !");
+            }
+            final String decodedString = jsonObject.getString("rank").toLowerCase();
+
+            try {
+
+                String rank = playerService.getRank(param);
+
+                if (rank != null) {
+
+                    rank = this.playerService.updateRank(param, decodedString);
+                    final JsonObject jsonResponse = new JsonObject();
+                    jsonResponse.put("updated-rank", rank);
+                    routingContext.response()
+                            .setStatusCode(200)
+                            .putHeader("content-type", "application/json")
+                            .end(Json.encode(jsonResponse));
+
+                } else {
+                    SkyGamesTheApp.LOGGER.warn(HttpLogUtils.logHttpRequestRemote(routingContext.request()) + " player[uuid=\"" + param + "\"] can't be found !");
+                    final JsonObject errorJsonResponse = new JsonObject();
+                    errorJsonResponse.put("error", "No player can be found for the specified parameter : " + param);
+                    errorJsonResponse.put("player", param);
+                    routingContext.response()
+                            .setStatusCode(404)
+                            .putHeader("content-type", "application/json")
+                            .end(Json.encode(errorJsonResponse));
+                }
+
+            } catch (ClassNotFoundException | SQLException | MissingPropertyException e) {
+                SkyGamesTheApp.LOGGER.error(HttpLogUtils.logHttpRequestRemote(routingContext.request()) + " Internal Server Error : PlayerService updatePlayerRank(getRank) SqlConnector Exception !", e);
+
+                final JsonObject errorJsonResponse = new JsonObject();
+                errorJsonResponse.put("error", "SqlConnector exception");
+
+                routingContext.response()
+                        .setStatusCode(500)
+                        .putHeader("content-type", "application/json")
+                        .end(Json.encode(errorJsonResponse));
+            }
+
+        } catch (DecodeException e) {
+            SkyGamesTheApp.LOGGER.error(HttpLogUtils.logHttpRequestRemote(routingContext.request()) + " Internal Server Error : Json Point parse exception !", e);
+
+            final JsonObject errorJsonResponse = new JsonObject();
+            errorJsonResponse.put("error", "Json decode exception");
+            errorJsonResponse.put("invalid-body-request", body);
+
+            routingContext.response().setStatusCode(400)
+                    .putHeader("content-type", "application/json")
+                    .end(Json.encode(errorJsonResponse));
+        }
+    }
+
+    private void getPlayerMoney(final RoutingContext routingContext) {
+
+    }
+
+    private void updatePlayerMoney(final RoutingContext routingContext) {
+
     }
 
     private boolean checkTeam(String id) throws ClassNotFoundException, SQLException, MissingPropertyException {

@@ -32,7 +32,7 @@ jar {
 dependencies {
     shade project(':api')
     shade 'io.vertx:vertx-core'
-    shade 'io.vertx:vertx-web:3.9.0'
+    shade 'io.vertx:vertx-web:3.9.7'
     shade 'org.mariadb.jdbc:mariadb-java-client:2.6.0'
     shade 'org.apache.logging.log4j:log4j-api:2.13.1'
     shade 'org.apache.logging.log4j:log4j-core:2.13.1'

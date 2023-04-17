@@ -51,7 +51,7 @@ public class PlayerService {
 	}
 	
 	public final static Player getPlayerFromResultSet(ResultSet rs) throws SQLException {
-		return new Player(rs.getString("uuid"),rs.getString("name"),rs.getDate("first_login"),rs.getDate("last_login"),rs.getString("team"));
+		return new Player(rs.getString("uuid"),rs.getString("name"),rs.getDate("first_login"),rs.getDate("last_login"),rs.getString("team"),rs.getString("rank"));
 	}
 	
 	public int delete(final String uuid) throws ClassNotFoundException, SQLException, MissingPropertyException {
@@ -94,6 +94,27 @@ public class PlayerService {
 		stmt.setString(1, uuid);
 		stmt.setString(2, team);
 		return this.getTeam(stmt.executeQuery());
+	}
+
+	private String getRank(ResultSet rs) throws SQLException {
+		if(rs.first()) {
+			return rs.getString("rank");
+		}else {
+			return null;
+		}
+	}
+
+	public String getRank(final String uuid) throws ClassNotFoundException, SQLException, MissingPropertyException{
+		PreparedStatement stmt = this.connector.getConnection().prepareStatement("{CALL getPlayerRank(?)}");
+		stmt.setString(1, uuid);
+		return this.getRank(stmt.executeQuery());
+	}
+
+	public String updateRank(final String uuid, final String rank) throws SQLException, ClassNotFoundException, MissingPropertyException {
+		PreparedStatement stmt = this.connector.getConnection().prepareStatement("{CALL updatePlayerRank(?,?)}");
+		stmt.setString(1, uuid);
+		stmt.setString(2, rank);
+		return this.getRank(stmt.executeQuery());
 	}
     
 }

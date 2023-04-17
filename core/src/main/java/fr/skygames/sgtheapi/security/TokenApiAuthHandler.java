@@ -4,14 +4,11 @@ import fr.skygames.sgtheapi.SkyGamesTheApp;
 import fr.skygames.sgtheapi.utils.HttpLogUtils;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
-import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
-
-import java.util.Map;
 
 public class TokenApiAuthHandler implements Handler<RoutingContext>{
 	
